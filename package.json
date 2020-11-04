@@ -1,0 +1,16 @@
+{
+  "name": "es-statistics-service",
+  "version": "0.0.1",
+  "description": "Energy System Statistics service",
+  "author": "Edwin Matthijssen <edwin.matthijssen@tno.nl>",
+  "license": "MIT",
+  "scripts": {
+    "docker:build": "docker build -t es-statistics-service .",
+    "docker:tag": "docker tag es-statistics-service 127.0.0.1:5000/es-statistics-service",
+    "docker:publish": "docker push 127.0.0.1:5000/es-statistics-service",
+    "docker:remove": "docker service rm es-statistics-service",
+    "docker:deploy": "docker service create --name es-statistics-service -p 6003:6003 127.0.0.1:5000/es-statistics-service",
+    "docker": "npm run docker:build && npm run docker:tag && npm run docker:publish && npm run docker:remove && npm run docker:deploy",
+    "docker1": "npm run docker:build && npm run docker:tag && npm run docker:publish && npm run docker:deploy"
+  }
+}
