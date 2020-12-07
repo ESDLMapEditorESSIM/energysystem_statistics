@@ -87,6 +87,7 @@ CostInformation.installationCosts.eType = GenericProfile
 CostInformation.fixedOperationalAndMaintenanceCosts.eType = GenericProfile
 CostInformation.marginalCosts.eType = GenericProfile
 CostInformation.variableOperationalAndMaintenanceCosts.eType = GenericProfile
+CostInformation.discountRate.eType = GenericProfile
 StringLabelDistribution.stringItem.eType = StringItem
 EnergyLabelDistribution.labelPerc.eType = EnergyLabelPerc
 FromToDistribution.fromToItem.eType = FromToItem

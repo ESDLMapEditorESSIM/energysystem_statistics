@@ -26,7 +26,7 @@ ns = api.namespace('statistics', description='Operations to calculate energy sys
 
 
 post_body = api.model('PostBody', {
-    'energysystem': fields.String
+    "energysystem": fields.String
 })
 
 

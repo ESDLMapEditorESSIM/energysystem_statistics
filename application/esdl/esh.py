@@ -37,13 +37,13 @@ class EnergySystemHandler:
         setattr(esdl.ProfileElement, 'from', esdl.ProfileElement.from_)
         alias('start', esdl.ProfileElement.from_)
 
-        esdl.FromToIntPerc.from_.name = 'from'
-        setattr(esdl.FromToIntPerc, 'from', esdl.FromToIntPerc.from_)
-        alias('start', esdl.FromToIntPerc.from_)
+        esdl.FromToIntItem.from_.name = 'from'
+        setattr(esdl.FromToIntItem, 'from', esdl.FromToIntItem.from_)
+        alias('start', esdl.FromToIntItem.from_)
 
-        esdl.FromToDoublePerc.from_.name = 'from'
-        setattr(esdl.FromToDoublePerc, 'from', esdl.FromToDoublePerc.from_)
-        alias('start', esdl.FromToDoublePerc.from_)
+        esdl.FromToDoubleItem.from_.name = 'from'
+        setattr(esdl.FromToDoubleItem, 'from', esdl.FromToDoubleItem.from_)
+        alias('start', esdl.FromToDoubleItem.from_)
 
     def _new_resource_set(self):
         self.rset = ResourceSet()

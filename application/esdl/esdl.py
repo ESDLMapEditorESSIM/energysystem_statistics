@@ -39,7 +39,7 @@ AreaTypeEnum = EEnum('AreaTypeEnum', literals=['UNDEFINED', 'ROAD', 'RAILWAY', '
                                                'RURAL_AREA', 'BUILT', 'WATER', 'SEA', 'RIVER', 'CANAL', 'LAKE', 'LAND', 'PARCEL'])
 
 HeatDemandTypeEnum = EEnum('HeatDemandTypeEnum', literals=[
-                           'UNDEFINED', 'SPACE_HEATING', 'HOT_TAPWATER', 'SH_AND_HTW', 'OTHER'])
+                           'UNDEFINED', 'SPACE_HEATING', 'HOT_TAPWATER', 'SH_AND_HTW', 'COOKING', 'OTHER'])
 
 OwnershipRentalTypeEnum = EEnum('OwnershipRentalTypeEnum', literals=[
                                 'UNDEFINED', 'PRIVATELY_OWNED', 'PRIVATE_RENTAL', 'HOUSING_ASSOCIATION'])
@@ -100,11 +100,11 @@ VehicleTypeEnum = EEnum('VehicleTypeEnum', literals=['UNDEFINED', 'CAR', 'TRUCK'
 MultiplierEnum = EEnum('MultiplierEnum', literals=[
                        'NONE', 'KILO', 'MEGA', 'GIGA', 'TERRA', 'PETA', 'MILLI', 'MICRO', 'NANO', 'PICO'])
 
-PhysicalQuantityEnum = EEnum('PhysicalQuantityEnum', literals=['UNDEFINED', 'ENERGY', 'POWER', 'VOLTAGE', 'PRESSURE', 'TEMPERATURE', 'EMISSION', 'COST', 'TIME', 'LENGTH',
-                                                               'DISTANCE', 'IRRADIANCE', 'SPEED', 'STATE_OF_CHARGE', 'VOLUME', 'AREA', 'POWER_REACTIVE', 'COMPOSITION', 'FLOW', 'STATE', 'HEAD', 'POSITION', 'COEFFICIENT', 'WEIGHT', 'FORCE'])
+PhysicalQuantityEnum = EEnum('PhysicalQuantityEnum', literals=['UNDEFINED', 'ENERGY', 'POWER', 'VOLTAGE', 'PRESSURE', 'TEMPERATURE', 'EMISSION', 'COST', 'TIME', 'LENGTH', 'DISTANCE',
+                                                               'IRRADIANCE', 'SPEED', 'STATE_OF_CHARGE', 'VOLUME', 'AREA', 'POWER_REACTIVE', 'COMPOSITION', 'FLOW', 'STATE', 'HEAD', 'POSITION', 'COEFFICIENT', 'WEIGHT', 'FORCE', 'CURRENT'])
 
 UnitEnum = EEnum('UnitEnum', literals=['NONE', 'JOULE', 'WATTHOUR', 'WATT', 'VOLT', 'BAR', 'PSI', 'DEGREES_CELSIUS', 'KELVIN', 'GRAM', 'EURO', 'DOLLAR', 'SECOND', 'MINUTE', 'QUARTER', 'HOUR',
-                                       'DAY', 'WEEK', 'MONTH', 'YEAR', 'METRE', 'SQUARE_METRE', 'CUBIC_METRE', 'LITRE', 'WATTSECOND', 'ARE', 'HECTARE', 'PERCENT', 'VOLT_AMPERE', 'VOLT_AMPERE_REACTIVE', 'PASCAL', 'NEWTON'])
+                                       'DAY', 'WEEK', 'MONTH', 'YEAR', 'METRE', 'SQUARE_METRE', 'CUBIC_METRE', 'LITRE', 'WATTSECOND', 'ARE', 'HECTARE', 'PERCENT', 'VOLT_AMPERE', 'VOLT_AMPERE_REACTIVE', 'PASCAL', 'NEWTON', 'AMPERE'])
 
 TimeUnitEnum = EEnum('TimeUnitEnum', literals=[
                      'NONE', 'SECOND', 'MINUTE', 'QUARTER', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'])
@@ -657,8 +657,9 @@ class CostInformation(EObject, metaclass=MetaEClass):
     fixedOperationalAndMaintenanceCosts = EReference(ordered=True, unique=True, containment=True)
     marginalCosts = EReference(ordered=True, unique=True, containment=True)
     variableOperationalAndMaintenanceCosts = EReference(ordered=True, unique=True, containment=True)
+    discountRate = EReference(ordered=True, unique=True, containment=True)
 
-    def __init__(self, *, investmentCosts=None, installationCosts=None, fixedOperationalAndMaintenanceCosts=None, marginalCosts=None, variableOperationalAndMaintenanceCosts=None, id=None, **kwargs):
+    def __init__(self, *, investmentCosts=None, installationCosts=None, fixedOperationalAndMaintenanceCosts=None, marginalCosts=None, variableOperationalAndMaintenanceCosts=None, id=None, discountRate=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
@@ -681,6 +682,9 @@ class CostInformation(EObject, metaclass=MetaEClass):
 
         if variableOperationalAndMaintenanceCosts is not None:
             self.variableOperationalAndMaintenanceCosts = variableOperationalAndMaintenanceCosts
+
+        if discountRate is not None:
+            self.discountRate = discountRate
 
 
 class StringItem(EObject, metaclass=MetaEClass):
@@ -1572,15 +1576,6 @@ class TableRow(EObject, metaclass=MetaEClass):
 
         if value:
             self.value.extend(value)
-
-
-class AirVessel(EObject, metaclass=MetaEClass):
-
-    def __init__(self, **kwargs):
-        if kwargs:
-            raise AttributeError('unexpected arguments: {}'.format(kwargs))
-
-        super().__init__()
 
 
 class Notes(EObject, metaclass=MetaEClass):
@@ -3208,8 +3203,9 @@ class Material(Matter):
     thermalConductivity = EAttribute(eType=EDouble, derived=False, changeable=True)
     electricalConductivity = EAttribute(eType=EDouble, derived=False, changeable=True)
     youngsModulus = EAttribute(eType=EDouble, derived=False, changeable=True)
+    specificHeatCapacity = EAttribute(eType=EDouble, derived=False, changeable=True)
 
-    def __init__(self, *, thermalConductivity=None, electricalConductivity=None, youngsModulus=None, **kwargs):
+    def __init__(self, *, thermalConductivity=None, electricalConductivity=None, youngsModulus=None, specificHeatCapacity=None, **kwargs):
 
         super().__init__(**kwargs)
 
@@ -3221,6 +3217,9 @@ class Material(Matter):
 
         if youngsModulus is not None:
             self.youngsModulus = youngsModulus
+
+        if specificHeatCapacity is not None:
+            self.specificHeatCapacity = specificHeatCapacity
 
 
 @abstract
@@ -4298,6 +4297,13 @@ class Building(GenericBuilding):
         super().__init__(**kwargs)
 
 
+class AirVessel(Transport):
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+
+
 class ElectricityNetwork(EnergyNetwork):
     """Describes an complete Electricty network, without detailing the complete topology. It is a Transport capability"""
     voltage = EAttribute(eType=EDouble, derived=False, changeable=True)
@@ -4400,18 +4406,41 @@ class Transformer(AbstractTransformer):
 
 class HeatExchange(AbstractTransformer):
     """Exchange heat between two circuits"""
-    LossDeltaT = EAttribute(eType=EDouble, derived=False, changeable=True)
     heatTransferCoefficient = EAttribute(eType=EDouble, derived=False, changeable=True)
+    lengthPrimarySide = EAttribute(eType=EDouble, derived=False, changeable=True)
+    diameterPrimarySide = EAttribute(eType=EDouble, derived=False, changeable=True)
+    roughnessPrimarySide = EAttribute(eType=EDouble, derived=False, changeable=True)
+    lengthSecundarySide = EAttribute(eType=EDouble, derived=False,
+                                     changeable=True, default_value=0.0)
+    diameterSecundarySide = EAttribute(
+        eType=EDouble, derived=False, changeable=True, default_value=0.0)
+    roughnessSecundarySide = EAttribute(
+        eType=EDouble, derived=False, changeable=True, default_value=0.0)
 
-    def __init__(self, *, LossDeltaT=None, heatTransferCoefficient=None, **kwargs):
+    def __init__(self, *, heatTransferCoefficient=None, lengthPrimarySide=None, diameterPrimarySide=None, roughnessPrimarySide=None, lengthSecundarySide=None, diameterSecundarySide=None, roughnessSecundarySide=None, **kwargs):
 
         super().__init__(**kwargs)
 
-        if LossDeltaT is not None:
-            self.LossDeltaT = LossDeltaT
-
         if heatTransferCoefficient is not None:
             self.heatTransferCoefficient = heatTransferCoefficient
+
+        if lengthPrimarySide is not None:
+            self.lengthPrimarySide = lengthPrimarySide
+
+        if diameterPrimarySide is not None:
+            self.diameterPrimarySide = diameterPrimarySide
+
+        if roughnessPrimarySide is not None:
+            self.roughnessPrimarySide = roughnessPrimarySide
+
+        if lengthSecundarySide is not None:
+            self.lengthSecundarySide = lengthSecundarySide
+
+        if diameterSecundarySide is not None:
+            self.diameterSecundarySide = diameterSecundarySide
+
+        if roughnessSecundarySide is not None:
+            self.roughnessSecundarySide = roughnessSecundarySide
 
 
 class EConnection(AbstractConnection):
