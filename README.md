@@ -1,4 +1,4 @@
-# ESDL EnergySysten Statistics
+# ESDL EnergySystem Statistics
 
 Service that gives back metrics / statistics on the input ESDL
 
